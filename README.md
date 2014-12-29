@@ -7,6 +7,8 @@ Thrift is capable of serializing/deserializing binary fields (and does not perfo
 whereas Parquet-MR will always apply UTF-8 encoding (treating binary fields as though they are
 UTF-8 encoded strings). This causes data corruption.
 
+The Thrift struct that is encoded can be found in [src/main/thrift/TestStruct.thrift](src/main/thrift/TestStruct.thrift).
+
 An example of Thrift performing correctly can be found in [src/main/scala/com/rouesnel/parquetmr/bug/ThriftExample.scala](src/main/scala/com/rouesnel/parquetmr/bug/ThriftExample.scala).
 
 An example of Parquet performing badly can be found in [src/main/scala/com/rouesnel/parquetmr/bug/ParquetExample.scala](src/main/scala/com/rouesnel/parquetmr/bug/ParquetExample.scala).
@@ -61,6 +63,8 @@ This should print the following:
     Parquet
     =======
 
+    Parquet File written to /some/random/location/test-324324-foo.parquet
+
     After encoding - binary field is equal to original binary field: false
     After encoding - binary field is equal to UTF8 encoded binary field: false
 
@@ -78,4 +82,3 @@ This should print the following:
     binaryField:         3, 0, 0, 0, -123, 20, 33
     stringField:         foo
     binaryAsStringField: -17, -65, -67, 20, 33
-
