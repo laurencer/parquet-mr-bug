@@ -67,6 +67,8 @@ object ParquetExample {
     println(s"Parquet")
     println(s"=======")
     println()
+    println(s"Parquet File written to ${path.toString}")
+    println()
     println(s"After encoding - binary field is equal to original binary field: ${Console.RED}${ deserializedBinaryFieldEqualToOriginal }${Console.RESET}")
     println(s"After encoding - binary field is equal to UTF8 encoded binary field: ${Console.RED}${ deserializedBinaryFieldEqualToUTF8EncodedField }${Console.RESET}")
     println()
