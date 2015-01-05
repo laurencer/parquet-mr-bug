@@ -1,9 +1,10 @@
 package com.rouesnel.parquetmr.bug
 
+import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
 import java.nio.ByteBuffer
 
-// Uses the Twitter Scrooge library to perform Thrift serialization/deserialization.
-import com.twitter.bijection.scrooge.BinaryScalaCodec
+import org.apache.thrift.protocol.TCompactProtocol
+import org.apache.thrift.transport.TIOStreamTransport
 
 object ThriftExample {
 
@@ -19,26 +20,40 @@ object ThriftExample {
       """.stripMargin)
   }
 
-  def main(args: Array[String]): Unit = {
-    // Scrooge encoder for the thrift structure.
-    val codec = BinaryScalaCodec(TestStruct)
+  def serialize(ts: TestStruct): Array[Byte] = {
+    val os = new ByteArrayOutputStream()
+    val transport = new TIOStreamTransport(os)
+    val protocol = (new TCompactProtocol.Factory).getProtocol(transport)
+    ts.write(protocol)
+    os.toByteArray
+  }
 
+  def deserialize(bytes: Array[Byte]): TestStruct = {
+    val is = new ByteArrayInputStream(bytes)
+    val transport = new TIOStreamTransport(is)
+    val protocol = (new TCompactProtocol.Factory).getProtocol(transport)
+    val ts = new TestStruct()
+    ts.read(protocol)
+    ts
+  }
+
+  def main(args: Array[String]): Unit = {
     // Binary data that does not encode properly to UTF-8
     val nonUtf8Bytes: Array[Byte] = Array[Byte](-123, 20, 33)
 
     // Create an example of the thrift structure which will exhibit byte
     // arrays being encoded correctly.
-    val testStruct: TestStruct = TestStruct(
+    val testStruct: TestStruct = new TestStruct(
       ByteBuffer.wrap(nonUtf8Bytes),
       "foo",
       new String(nonUtf8Bytes, "UTF-8")
     )
 
     // Serialize the byte array.
-    val serialized: Array[Byte] = codec(testStruct)
+    val serialized: Array[Byte] = serialize(testStruct)
 
     // Deserialize the byte array and confirm that the strings are correct.
-    val deserialized: TestStruct = codec.invert(serialized).get
+    val deserialized: TestStruct = deserialize(serialized)
 
     // Check whether the binary field after serialization is equal to the original value.
     val deserializedBinaryFieldEqualToOriginal =

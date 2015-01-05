@@ -21,6 +21,11 @@ is a simple transformation of [parquet.thrift.ThriftSchemaConverter.ThriftStruct
 How to run
 ==========
 
+Ensure you have the Thrift (v 0.7) compiler installed and `thrift` is on your `PATH`.
+
+- Generate the Thrift Java structure by running: `thrift --gen java src/main/thrift/TestStruct.thrift`
+- Copy the generated java into the correct location: `mv gen-java src/main/java`
+
 Thrift Example
 --------------
 
@@ -56,15 +61,21 @@ This should print the following:
 Parquet Example
 ---------------
 
-    ./sbt "run-main com.rouesnel.parquetmr.bug.ParquetExample"
+    ./sbt "run-main com.rouesnel.parquetmr.bug.ParquetExample -- <number of records to write>"
+
+    ./sbt "run-main com.rouesnel.parquetmr.bug.ParquetExample -- 2"
 
 This should print the following:
+
 
     Parquet
     =======
 
-    Parquet File written to /some/random/location/test-324324-foo.parquet
+    Parquet File written to /var/folders/f7/rlm5q5ks7_s4z80dzhlg_yx40000gn/T/parquet8605783007234723594.parquet
+    Wrote 2 identical records to Parquet
 
+    Record 0
+    ===========
     After encoding - binary field is equal to original binary field: false
     After encoding - binary field is equal to UTF8 encoded binary field: false
 
@@ -77,7 +88,29 @@ This should print the following:
 
 
 
-    Thrift Serialized
+    Parquet Serialized
+    -----
+    binaryField:         3, 0, 0, 0, -123, 20, 33
+    stringField:         foo
+    binaryAsStringField: -17, -65, -67, 20, 33
+
+
+
+    Record 1
+    ===========
+    After encoding - binary field is equal to original binary field: false
+    After encoding - binary field is equal to UTF8 encoded binary field: false
+
+
+    Original
+    -----
+    binaryField:         -123, 20, 33
+    stringField:         foo
+    binaryAsStringField: -17, -65, -67, 20, 33
+
+
+
+    Parquet Serialized
     -----
     binaryField:         3, 0, 0, 0, -123, 20, 33
     stringField:         foo

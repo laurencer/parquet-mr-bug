@@ -11,7 +11,6 @@ object build extends Build {
 
   lazy val standardSettings: Seq[Sett] =
     uniformDependencySettings ++
-    uniformThriftSettings ++
     uniform.docSettings("https://github.com/laurencer/parquet-mr-bug") ++
     Seq[Sett](incOptions := incOptions.value.withNameHashing(true))
 
